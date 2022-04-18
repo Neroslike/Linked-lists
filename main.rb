@@ -8,6 +8,7 @@ class LinkedList
     @tail = tail
   end
 
+  # Adds an element to the end of the list
   def append(value)
     if @head.nil?
       @head = value
@@ -18,6 +19,7 @@ class LinkedList
     end
   end
 
+  # Adds an element to the start of the list
   def prepend(value)
     if @head.nil?
       @head = value
@@ -42,6 +44,7 @@ class LinkedList
     output
   end
 
+  #Return the length of the list
   def size
     output = 0
     current = @head
@@ -64,14 +67,14 @@ class LinkedList
     @tail.value
   end
 
-
+  # Return the node at the specified index
   def at_index(index)
     count = 0
     current = @head
     loop do
       if nil?
         return 'Empty list'
-      elsif index > size- 1
+      elsif index > size - 1
         return 'Out of range index'
       elsif count == index
         return current
@@ -82,11 +85,12 @@ class LinkedList
     end
   end
 
-  # Return element at index
+  # Return value at node index
   def at(index)
     at_index(index).value
   end
 
+  # Removes last element from the list
   def pop
     return nil if @head.nil?
     popped = @tail.value
@@ -95,6 +99,7 @@ class LinkedList
     popped
   end
 
+  # Removes first element from the list
   def shift
     return nil if @head.nil?
     shifted = @head.value
@@ -106,6 +111,7 @@ class LinkedList
     shifted
   end
 
+  # Returns new LinkedList from index x to y
   def slice(x, y)
     return nil if x == y
 
@@ -152,28 +158,68 @@ class LinkedList
     self
   end
 
+  # Returns true if value is present in the list, otherwise false
   def contains?(value)
-    if sort.binary_search(value)
-      true
-    else
+    if sort.binary_search(value).nil?
       false
+    else
+      true
     end
+  end
+
+  # Returns the index of the node containing the value
+  def find(value)
+    count = 0
+    current = @head
+    loop do
+      return 'Empty list' if nil?
+      return count if value == current.value
+
+      count += 1
+      return nil if count > size - 1
+
+      current = current.next_node
+    end
+  end
+
+  def insert_at(value, index)
+    if index > size - 1
+      puts 'Out of range'
+      return
+    end
+
+    list_right = slice(index, size)
+    list_left = slice(0, index)
+    list_right.prepend(Node.new(value))
+    @head = (list_left + list_right).head
+  end
+
+  def remove_at(index)
+    if index > size - 1
+      puts 'Out of range'
+      return
+    end
+
+    list_right = slice(index, size)
+    list_left = slice(0, index)
+    list_right.shift
+    @head = (list_left + list_right).head
   end
 
   protected
 
-  def binary_search(value)
+  def binary_search(value, start = 0, stop = size - 1)
     list = self
-    start = size / 2
-    return true if list.at(start) == value
+    return (start + stop) / 2 if list.at((start + stop) / 2) == value
 
-    if value < list.at(start)
-      list = list.slice(0, start)
+    if value < list.at((start + stop) / 2)
+      stop = (start + stop) / 2 - 1
     else
-      list = list.slice(start+1, list.size)
+      start = (start + stop) / 2 + 1
     end
-    return false if list.nil?
-    list.binary_search(value)
+    return nil if start > stop
+
+    list.binary_search(value, start, stop)
   end
 end
 
@@ -185,10 +231,3 @@ class Node
     @next_node = next_node
   end
 end
-
-new_list = LinkedList.new()
-6.times do
-  new_list.append(Node.new(rand(0..10)))
-end
-puts new_list
-puts new_list.contains?(9)
