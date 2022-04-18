@@ -118,6 +118,7 @@ class LinkedList
     output
   end
 
+  # Merge sorting algorithm
   def sort(list = self)
     sorted = LinkedList.new
     if list.size < 2
@@ -150,6 +151,30 @@ class LinkedList
     @tail.next_node = other.at_index(0)
     self
   end
+
+  def contains?(value)
+    if sort.binary_search(value)
+      true
+    else
+      false
+    end
+  end
+
+  protected
+
+  def binary_search(value)
+    list = self
+    start = size / 2
+    return true if list.at(start) == value
+
+    if value < list.at(start)
+      list = list.slice(0, start)
+    else
+      list = list.slice(start+1, list.size)
+    end
+    return false if list.nil?
+    list.binary_search(value)
+  end
 end
 
 class Node
@@ -160,3 +185,10 @@ class Node
     @next_node = next_node
   end
 end
+
+new_list = LinkedList.new()
+6.times do
+  new_list.append(Node.new(rand(0..10)))
+end
+puts new_list
+puts new_list.contains?(9)
